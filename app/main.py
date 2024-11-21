@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from api import endpoints
 import uvicorn
 
@@ -14,10 +15,17 @@ def create_app() -> FastAPI:
         description="A FastAPI application for PDF query and chat",
         version="0.1.0",
     )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:5173"],  # Adjust this to your frontend URL
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     # Add routers
     app.include_router(
-        endpoints.router, prefix="/v1", tags=["PDF", "Embeddings", "Query"]
+        endpoints.router, prefix="/api", tags=["PDF", "Embeddings", "Query"]
     )
 
     # Health check endpoint

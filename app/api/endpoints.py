@@ -53,7 +53,7 @@ async def upload_pdf_and_get_embeddings(file: UploadFile = File(...)):
     }
 
 
-@router.post("/query")
+@router.post("/chat")
 async def query_embeddings(request: QueryRequest):
     """
     Process a query and generate a response.
