@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 const ChatArea = ({ conversation, loading }) => {
     // console.log(conversation);
@@ -39,7 +40,32 @@ const ChatArea = ({ conversation, loading }) => {
                                         loop
                                         muted
                                         className="h-8 w-12 p-0 m-0"
-                                    /> </div> : <div className="rounded-lg bg-muted px-4 py-2.5 md:py-2"><p className="text-base md:text-sm">{message}</p></div>}
+                                    />
+                                </div> :
+                                <div className="rounded-lg bg-muted px-4 py-2.5 md:py-2">
+                                    <ReactMarkdown
+                                        className="text-base md:text-sm"
+                                        components={{
+                                            a: ({ node, ...props }) => (
+                                                <a
+                                                    {...props}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:underline"
+                                                />
+                                            ),
+                                            code: ({ node, ...props }) => (
+                                                <code
+                                                    {...props}
+                                                    className="bg-gray-100 p-1 rounded text-sm"
+                                                />
+                                            )
+                                        }}
+                                    >
+                                        {message}
+                                    </ReactMarkdown>
+                                </div>
+                            }
                         </div>
                     </div>
                 ))}

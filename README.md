@@ -34,6 +34,18 @@ This project is a real-time chat application that integrates a WebSocket server 
    docker run -p 6333:6333 -p 6334:6334 qdrant/qdrant
    ```
 
+4. **Set Up PostgreSQL Database:**
+
+   - Ensure PostgreSQL is installed and running.
+   - Create a database named `RAG` by executing the following commands in the PostgreSQL CLI or any PostgreSQL GUI tool:
+     ```sql
+     CREATE DATABASE RAG;
+     ```
+
+   - Update the database connection settings in your backend's configuration file (e.g., `.env` or a settings module) to point to the `RAG` database.
+
+---
+
 ### **Frontend (`client`)**
 
 1. **Navigate to the `client` directory:**
@@ -55,7 +67,7 @@ This project is a real-time chat application that integrates a WebSocket server 
 
 - From the `app` directory, run the backend server:
   ```bash
-  python main.py
+  uvicorn main:app --reload
   ```
 
 ### **Step 2: Start the Frontend**
@@ -78,7 +90,7 @@ This project is a real-time chat application that integrates a WebSocket server 
    - Utilizes a vector database (Qdrant) for efficient query handling.
 
 3. **Persistent Message Storage**:
-   - User and bot messages are logged to a repository for future retrieval.
+   - User and bot messages are logged to a PostgreSQL database (`RAG`) for future retrieval.
 
 4. **Dynamic Frontend**:
    - Modern React interface for seamless user interaction.
@@ -89,6 +101,7 @@ This project is a real-time chat application that integrates a WebSocket server 
 
 ### **Backend**
 - **FastAPI**: Framework for building the WebSocket server.
+- **PostgreSQL**: Relational database for persistent message storage.
 - **Qdrant**: Vector database for storing embeddings and improving chatbot responses.
 - **Docker**: Containerized database for easy deployment.
 
@@ -100,8 +113,8 @@ This project is a real-time chat application that integrates a WebSocket server 
 
 ## **Developer Notes**
 - Ensure Docker is installed and running for Qdrant initialization.
-- Configure the chatbot (`ChatbotManager`) to suit your specific use case.
-- Use `.env` files for storing sensitive configurations like API keys.
+- Configure the chatbot (`ChatbotManager`) and database connection settings as per your use case.
+- Use `.env` files for storing sensitive configurations like API keys and database credentials.
 
 ---
 
