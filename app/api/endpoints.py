@@ -3,24 +3,15 @@ from core.embeddings import EmbeddingsManager
 from utils.file_utils import save_uploaded_file
 from core.chatbot import ChatbotManager
 from schema.requests import QueryRequest
-import psycopg2
+from schema.db_models import MessageRepository, DATABASE_URL
 
 router = APIRouter()
-
+message_repo = MessageRepository(DATABASE_URL)
 
 @router.get("/get-conversation")
 def get_conversation():
-    conn = psycopg2.connect(
-        dbname="RAG", user="postgres", password="admin", host="localhost", port="5432"
-    )
-    cursor = conn.cursor()
-    cursor.execute(
-        "SELECT * FROM messages WHERE conversation_id = %s ORDER BY timestamp;", (1,)
-    )
-    messages = cursor.fetchall()
-    conn.close()
+    messages = message_repo.get_conversation_messages(conversation_id=1)
     return {"messages": messages}
-
 
 @router.post("/upload-pdf")
 async def upload_pdf_and_get_embeddings(file: UploadFile = File(...)):
@@ -33,10 +24,8 @@ async def upload_pdf_and_get_embeddings(file: UploadFile = File(...)):
     Returns:
         Dict with upload and embedding details
     """
-    # Save the uploaded file
     file_path = save_uploaded_file(file, "./files")
 
-    # Create embeddings
     embeddings_manager = EmbeddingsManager(
         model_name="BAAI/bge-small-en",
         device="cpu",
@@ -52,7 +41,6 @@ async def upload_pdf_and_get_embeddings(file: UploadFile = File(...)):
         "embeddings": result,
     }
 
-
 @router.post("/chat")
 async def query_embeddings(request: QueryRequest):
     """
@@ -64,7 +52,6 @@ async def query_embeddings(request: QueryRequest):
     Returns:
         Dict with generated response
     """
-    # Initialize managers
     bot = ChatbotManager(
         model_name="BAAI/bge-small-en",
         device="cpu",
@@ -74,22 +61,17 @@ async def query_embeddings(request: QueryRequest):
         qdrant_url="http://localhost:6333",
         collection_name="vector_db",
     )
-    # Get response
     response = bot.get_response(request.query)
 
-    conn = psycopg2.connect(
-        dbname="RAG", user="postgres", password="admin", host="localhost", port="5432"
+    message_repo.add_message(
+        conversation_id=1,
+        sender="user",
+        message=request.query
     )
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO messages (conversation_id, sender, message) VALUES (%s, %s, %s)",
-        (1, "user", request.query),
+    message_repo.add_message(
+        conversation_id=1,
+        sender="bot",
+        message=response
     )
 
-    cursor.execute(
-        "INSERT INTO messages (conversation_id, sender, message) VALUES (%s, %s, %s)",
-        (1, "bot", response),
-    )
-    conn.commit()
-    conn.close()
     return {"response": response}

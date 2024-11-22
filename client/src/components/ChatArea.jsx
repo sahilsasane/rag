@@ -1,16 +1,17 @@
 import React from 'react'
 
 const ChatArea = ({ conversation }) => {
+    console.log(conversation)
     return (
         <div className="flex-1 overflow-y-auto p-3 md:p-4">
             <div className="space-y-6 md:space-y-4">
-                {conversation.map(([id, _, userType, message], index) => (
+                {conversation.map(({ id, message, sender }, index) => (
                     <div key={id || index} className="flex items-start gap-3 md:gap-4">
                         <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${userType === "bot" ? "bg-emerald-100" : "bg-purple-200"
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${sender === "bot" ? "bg-emerald-100" : "bg-purple-200"
                                 }`}
                         >
-                            {userType === "bot" ? (
+                            {sender === "bot" ? (
                                 <img
                                     src="/bot.svg"
                                     alt="AI Avatar"

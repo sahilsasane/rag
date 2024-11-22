@@ -34,7 +34,7 @@ const Chat = () => {
             });
             const data = await response.json();
             console.log(data.response);
-            setConversation([...conversation, [, 1, "user", message,]]);
+            setConversation([...conversation, { id: 1, sender: "user", text: message }]);
         } catch (error) {
             console.error(error);
         }
