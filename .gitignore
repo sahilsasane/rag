@@ -1,2 +1,3 @@
 node_modules
 app/_pycache_
+app/.env

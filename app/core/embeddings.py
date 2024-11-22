@@ -4,15 +4,16 @@ from langchain_community.document_loaders import UnstructuredPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceBgeEmbeddings
 from langchain_community.vectorstores import Qdrant
+from dotenv import load_dotenv
 
-
+load_dotenv()
 class EmbeddingsManager:
     def __init__(
         self,
         model_name: str = "BAAI/bge-small-en",
         device: str = "cpu",
         encode_kwargs: dict = {"normalize_embeddings": True},
-        qdrant_url: str = "http://localhost:6333",
+        qdrant_url: str = os.getenv("QDRANT_URL"),
         collection_name: str = "vector_db",
     ):
         """

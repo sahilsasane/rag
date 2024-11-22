@@ -4,10 +4,13 @@ from core.embeddings import EmbeddingsManager
 from utils.file_utils import save_uploaded_file
 from core.chatbot import ChatbotManager
 from schema.requests import QueryRequest
-from schema.db_models import MessageRepository, DATABASE_URL
+from schema.db_models import MessageRepository
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 router = APIRouter()
-message_repo = MessageRepository(DATABASE_URL)
+message_repo = MessageRepository(os.getenv("DATABASE_URL"))
 
 @router.get("/get-conversation")
 def get_conversation():
@@ -31,7 +34,7 @@ async def upload_pdf_and_get_embeddings(file: UploadFile = File(...)):
         model_name="BAAI/bge-small-en",
         device="cpu",
         encode_kwargs={"normalize_embeddings": True},
-        qdrant_url="http://localhost:6333",
+        qdrant_url=os.getenv("QDRANT_URL"),
         collection_name="vector_db",
     )
     result = embeddings_manager.create_embeddings(file_path)
