@@ -60,5 +60,4 @@ class MessageRepository:
         finally:
             session.close()
 
-# Configuration for database connection
 DATABASE_URL = "postgresql://postgres:admin@localhost:5432/RAG"
