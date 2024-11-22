@@ -91,7 +91,7 @@ class ChatbotManager:
             llm=self.llm,
             chain_type="stuff",
             retriever=self.retriever,
-            return_source_documents=False,  # Set to False to return only 'result'
+            return_source_documents=False,  
             chain_type_kwargs=self.chain_type_kwargs,
             verbose=False,
         )
@@ -108,6 +108,6 @@ class ChatbotManager:
         """
         try:
             response = self.qa.run(query)
-            return response  # 'response' is now a string containing only the 'result'
+            return response  
         except Exception as e:
-            return "⚠️ Sorry, I couldn't process your request at the moment."
+            return "Sorry, I couldn't process your request at the moment."

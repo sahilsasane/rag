@@ -75,4 +75,4 @@ class EmbeddingsManager:
         except Exception as e:
             raise ConnectionError(f"Failed to connect to Qdrant: {e}")
 
-        return "✅ Vector DB Successfully Created and Stored in Qdrant!"
+        return "Vector DB Successfully Created and Stored in Qdrant"

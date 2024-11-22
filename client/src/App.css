@@ -1,0 +1,17 @@
+::-webkit-scrollbar {
+    width: 5px; /* Set scrollbar width */
+    height: 2px; /* Set scrollbar height */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #3e3e3e; /* Scrollbar color */
+    border-radius: 6px; /* Round edges */
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a2a2a2; /* Hover effect */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #fbfbfb; /* Scrollbar track background */
+  }

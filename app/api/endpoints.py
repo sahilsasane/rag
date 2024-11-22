@@ -1,4 +1,5 @@
-from fastapi import APIRouter, File, UploadFile, Depends
+from fastapi import APIRouter, File, UploadFile, Depends, WebSocket, WebSocketDisconnect
+from typing import List
 from core.embeddings import EmbeddingsManager
 from utils.file_utils import save_uploaded_file
 from core.chatbot import ChatbotManager
@@ -41,37 +42,54 @@ async def upload_pdf_and_get_embeddings(file: UploadFile = File(...)):
         "embeddings": result,
     }
 
-@router.post("/chat")
-async def query_embeddings(request: QueryRequest):
-    """
-    Process a query and generate a response.
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
 
-    Args:
-        request (QueryRequest): User's query
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
 
-    Returns:
-        Dict with generated response
-    """
-    bot = ChatbotManager(
-        model_name="BAAI/bge-small-en",
-        device="cpu",
-        encode_kwargs={"normalize_embeddings": True},
-        llm_model="llama3.2:3b",
-        llm_temperature=0.7,
-        qdrant_url="http://localhost:6333",
-        collection_name="vector_db",
-    )
-    response = bot.get_response(request.query)
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
 
-    message_repo.add_message(
-        conversation_id=1,
-        sender="user",
-        message=request.query
-    )
-    message_repo.add_message(
-        conversation_id=1,
-        sender="bot",
-        message=response
-    )
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
 
-    return {"response": response}
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+manager = ConnectionManager()
+
+@router.websocket("/ws/chat")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            bot = ChatbotManager(
+                model_name="BAAI/bge-small-en",
+                device="cpu",
+                encode_kwargs={"normalize_embeddings": True},
+                llm_model="llama3.2:3b",
+                llm_temperature=0.7,
+                qdrant_url="http://localhost:6333",
+                collection_name="vector_db",
+            )
+            response = bot.get_response(data)
+            message_repo.add_message(
+                conversation_id=1,
+                sender="user",
+                message=data
+            )
+            message_repo.add_message(
+                conversation_id=1,
+                sender="bot",
+                message=response
+            )
+            await manager.broadcast(f"{response}")
+            
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcast("A client disconnected.")
