@@ -37,12 +37,8 @@ const Header = () => {
     return (
         <header className="border-b">
             <div className="container flex h-14 md:h-16 items-center justify-between px-4">
-                <div className="flex items-center gap-2">
-                    <img
-                        src="/logo.svg"
-                        alt="AI Planet Logo"
-                        className="h-20 w-20"
-                    />
+                <div className="flex items-center gap-2 p-2 bg-purple-100 rounded-lg px-10">
+                    <span className="font-bold ">Rag App</span>
                 </div>
                 <div className="flex items-center gap-2 md:gap-4">
                     <div className="flex items-center gap-2">

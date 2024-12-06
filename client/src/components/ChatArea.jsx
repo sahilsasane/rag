@@ -23,8 +23,8 @@ const ChatArea = ({ conversation, loading }) => {
                         >
                             {sender === "bot" ? (
                                 <img
-                                    src="/bot.svg"
-                                    alt="AI Avatar"
+                                    src="/emoji.png"
+                                    alt="AI"
                                     className=""
                                 />
                             ) : (
