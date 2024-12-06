@@ -79,6 +79,16 @@ This project is a real-time chat application that integrates a WebSocket server 
 
 ---
 
+## **Screenshots**
+
+![Home Screen](./images/home.png)
+
+---
+
+![Home Screen](./images/chat_page.png)
+
+---
+
 ## **Features**
 
 1. **Real-Time Communication**:
